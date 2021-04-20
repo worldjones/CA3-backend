@@ -1,18 +1,9 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import java.util.stream.Collectors;
+import javax.persistence.*;
 
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -21,78 +12,75 @@ import org.mindrot.jbcrypt.BCrypt;
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "user_name", length = 25)
-    private String userName;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "user_pass")
-    private String userPass;
-    @JoinTable(name = "user_roles", joinColumns = {
-            @JoinColumn(name = "user_name", referencedColumnName = "user_name")}, inverseJoinColumns = {
-            @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
-    @ManyToMany
-    private List<Role> roleList = new ArrayList<>();
 
-    public List<String> getRolesAsStrings() {
-        if (roleList.isEmpty()) {
-            return null;
-        }
-        List<String> rolesAsStrings = new ArrayList<>();
-        roleList.forEach((role) -> {
-            rolesAsStrings.add(role.getRoleName().toString());
-        });
-        return rolesAsStrings;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    @ManyToMany
+    @JoinTable(name = "user_roles",
+            joinColumns = { @JoinColumn(name = "fk_user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "fk_role") })
+    private List<Role> roles;
 
     public User() {
     }
 
-    public User(String userName, String userPass) {
-        this.userName = userName;
-
-        setHashedUserPass(userPass);
-        //setDefaultRole();
+    public User(String username, String password) {
+        this.username = username;
+        this.password = generateHashedPassword(password);
     }
 
-
-    public String getUserName() {
-        return userName;
+    private String generateHashedPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public long getId() {
+        return id;
     }
 
-    public String getUserPass() {
-        return this.userPass;
+    public String getUsername() {
+        return username;
     }
 
-    public void setHashedUserPass(String userPass) {
-        this.userPass = BCrypt.hashpw(userPass, BCrypt.gensalt());
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public boolean verifyPassword(String pw) {
-        return (BCrypt.checkpw(pw, userPass));
+    public String getPassword() {
+        return password;
     }
 
-    private void setDefaultRole() {
-        this.roleList.add(new Role(Role.DEFAULT_ROLE));
+    public void setPassword(String password) {
+        this.password = generateHashedPassword(password);
     }
 
-    public List<Role> getRoleList() {
-        return roleList;
+    public boolean verifyPassword(String password) {
+        return BCrypt.checkpw(password, this.password);
     }
 
-    public void setRoleList(List<Role> roleList) {
-        this.roleList = roleList;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void addRole(Role userRole) {
-        roleList.add(userRole);
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+    }
+
+    public List<String> getRolesAsStrings() {
+        return roles.isEmpty() ? null : roles.stream().map(Object::toString).collect(Collectors.toList());
+    }
 }

@@ -35,15 +35,16 @@ public class EMF_Creator {
         
         boolean isDeployed = (System.getenv("DEPLOYED") != null);
         if (isDeployed) {
+            final String CONNECTION_STR = "CONNECTION_STARTCODE";
             /* Strategy for deployment */
             System.out.println("USING ENVIRONMENT VARIABLES");
             System.out.println("DEPLOYED       -->" + System.getenv("DEPLOYED"));
             System.out.println("USER           -->" + System.getenv("USER"));
             System.out.println("PW             -->" + System.getenv("PW"));
-            System.out.println("CONNECTION_STR -->" + System.getenv("CONNECTION_STR"));
+            System.out.println("CONNECTION_STR -->" + System.getenv(CONNECTION_STR));
             String user = System.getenv("USER");
             String pw = System.getenv("PW");
-            String connection_str = System.getenv("CONNECTION_STR");
+            String connection_str = System.getenv(CONNECTION_STR);
             Properties props = new Properties();
             props.setProperty("javax.persistence.jdbc.user", user);
             props.setProperty("javax.persistence.jdbc.password", pw);
