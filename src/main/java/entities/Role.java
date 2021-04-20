@@ -21,12 +21,19 @@ import javax.validation.constraints.Size;
 @Table(name = "roles")
 public class Role implements Serializable {
 
+    public static final Roles DEFAULT_ROLE = Roles.USER;
+
+    public enum Roles {
+        USER,
+        ADMIN
+    }
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
     @NotNull
     @Column(name = "role_name", length = 20)
-    private String roleName;
+    private Roles roleName;
     
     @ManyToMany(mappedBy = "roleList")
     private List<User> userList;
@@ -34,16 +41,16 @@ public class Role implements Serializable {
     public Role() {
     }
 
-    public Role(String roleName) {
-        this.roleName = roleName;
+    public Role(Roles role) {
+        this.roleName = role;
     }
 
-    public String getRoleName() {
+    public Roles getRoleName() {
         return roleName;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRoleName(Roles role) {
+        this.roleName = role;
     }
 
     public List<User> getUserList() {

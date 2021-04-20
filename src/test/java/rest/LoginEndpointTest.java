@@ -69,8 +69,8 @@ public class LoginEndpointTest {
             em.createQuery("delete from User").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
 
-            Role userRole = new Role("user");
-            Role adminRole = new Role("admin");
+            Role userRole = new Role(Role.DEFAULT_ROLE);
+            Role adminRole = new Role(Role.Roles.ADMIN);
             User user = new User("user", "test");
             user.addRole(userRole);
             User admin = new User("admin", "test");

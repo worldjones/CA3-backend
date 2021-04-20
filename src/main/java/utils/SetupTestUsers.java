@@ -28,8 +28,8 @@ public class SetupTestUsers {
       throw new UnsupportedOperationException("You have not changed the passwords");
 
     em.getTransaction().begin();
-    Role userRole = new Role("user");
-    Role adminRole = new Role("admin");
+    Role userRole = new Role(Role.DEFAULT_ROLE);
+    Role adminRole = new Role(Role.Roles.ADMIN);
     user.addRole(userRole);
     admin.addRole(adminRole);
     both.addRole(userRole);
