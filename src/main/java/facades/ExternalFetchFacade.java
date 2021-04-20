@@ -14,6 +14,7 @@ public class ExternalFetchFacade {
     String dadJokeUrl = "https://icanhazdadjoke.com/";
     String animeQuoteUrl = "https://animechan.vercel.app/api/random";
     String tronaldDumpUrl = "https://api.tronalddump.io/random/quote";
+    String jeopardyUrl = "http://jservice.io/api/random";
 
     Gson GSON = new Gson();
 
