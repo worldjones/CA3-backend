@@ -48,4 +48,15 @@ public class UserFacade {
         return user;
     }
 
+    public User create(String username, String password, List<String> roles) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            if ((Strings.isNullOrEmpty(username) || username.length() < 3) || (Strings.isNullOrEmpty(password) || password.length() < 3))
+                throw new WebApplicationException("Username and/or password should be more than 3 characters!", 400);
+
+            throw new UnsupportedOperationException();
+        } finally {
+            em.close();
+        }
+    }
 }
