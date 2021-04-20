@@ -1,12 +1,13 @@
 package facades;
 
+import com.google.common.base.Strings;
 import entities.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.WebApplicationException;
 
-import jdk.internal.joptsimple.internal.Strings;
 import security.errorhandling.AuthenticationException;
 
 import java.util.List;
@@ -38,7 +39,10 @@ public class UserFacade {
         EntityManager em = emf.createEntityManager();
         User user;
         try {
-            user = em.find(User.class, username);
+            TypedQuery<User> q = em.createQuery("SELECT u from User u WHERE u.username = :username", User.class);
+            q.setParameter("username", username);
+            user = q.getSingleResult();
+
             if (user == null || !user.verifyPassword(password)) {
                 throw new AuthenticationException("Invalid user name or password");
             }

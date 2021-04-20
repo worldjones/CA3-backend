@@ -1,6 +1,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.*;
@@ -26,7 +27,7 @@ public class User implements Serializable {
     @JoinTable(name = "user_roles",
             joinColumns = { @JoinColumn(name = "fk_user_id") },
             inverseJoinColumns = { @JoinColumn(name = "fk_role") })
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
 
     public User() {
     }

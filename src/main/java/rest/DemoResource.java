@@ -1,6 +1,7 @@
 package rest;
 
 import com.google.gson.Gson;
+import entities.Role.Roles;
 import entities.User;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -50,11 +51,10 @@ public class DemoResource {
             em.close();
         }
     }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("user")
-    @RolesAllowed("user")
+    @RolesAllowed("USER")
     public String getFromUser() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to User: " + thisuser + "\"}";
@@ -63,7 +63,7 @@ public class DemoResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("admin")
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public String getFromAdmin() {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
