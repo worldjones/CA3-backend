@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -28,33 +27,33 @@ public class Role implements Serializable {
     @Id
     @Basic(optional = false)
     @NotNull
-    @Column(name = "role_name", length = 20)
-    private String roleName;
+    @Column(length = 20)
+    private String name;
     
     @ManyToMany(mappedBy = "roles")
-    private List<User> userList;
+    private List<User> users;
 
     public Role() {
     }
 
     public Role(String role) {
-        this.roleName = role;
+        this.name = role;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
-    public void setRoleName(String role) {
-        this.roleName = role;
+    public void setName(String role) {
+        this.name = role;
     }
 
-    public List<User> getUserList() {
-        return userList;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
+    public void setUsers(List<User> userList) {
+        this.users = userList;
     }
 
     @Override
@@ -62,16 +61,16 @@ public class Role implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return roleName.equals(role.roleName);
+        return name.equals(role.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roleName);
+        return Objects.hash(name);
     }
 
     @Override
     public String toString() {
-        return roleName;
+        return name;
     }
 }
