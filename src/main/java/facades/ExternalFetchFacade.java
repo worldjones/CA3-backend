@@ -1,11 +1,11 @@
 package facades;
 
 import com.google.gson.Gson;
-import dtos.AnimeQuoteDTO;
-import dtos.DadJokeDto;
-import dtos.TronaldDumpDTO;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.nimbusds.jose.shaded.json.JSONObject;
+import dtos.*;
 import utils.HttpUtils;
-import dtos.ChuckNorrisJokeDTO;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ public class ExternalFetchFacade {
     String dadJokeUrl = "https://icanhazdadjoke.com/";
     String animeQuoteUrl = "https://animechan.vercel.app/api/random";
     String tronaldDumpUrl = "https://api.tronalddump.io/random/quote";
-    String jeopardyUrl = "http://jservice.io/api/random";
+    String jeopardyUrl = "https://jservice.io/api/random";
 
     Gson GSON = new Gson();
 
@@ -30,7 +30,7 @@ public class ExternalFetchFacade {
         return dadJokeDto;
     }
 
-    public AnimeQuoteDTO getAnimeQoute() throws IOException {
+    public AnimeQuoteDTO getAnimeQuote() throws IOException {
         String animeQuote = HttpUtils.fetchData(animeQuoteUrl);
         AnimeQuoteDTO animeQuoteDTO = GSON.fromJson(animeQuote, AnimeQuoteDTO.class);
         return animeQuoteDTO;
@@ -39,14 +39,18 @@ public class ExternalFetchFacade {
     public TronaldDumpDTO getTronaldDumpQuote() throws IOException {
         String tronaldDumpQuote = HttpUtils.fetchData(tronaldDumpUrl);
         TronaldDumpDTO tronaldDumpDTO = GSON.fromJson(tronaldDumpQuote, TronaldDumpDTO.class);
+        tronaldDumpDTO.setHref();
         return tronaldDumpDTO;
     }
 
-    public static void main(String[] args) throws IOException {
-        ExternalFetchFacade f = new ExternalFetchFacade();
-        /*System.out.println("Chuck Norris joke: " + f.getChuckNorrisJoke().getValue());
-        System.out.println("Dad joke: " + f.getDadJoke().getJoke());
-        System.out.println("Anime quote: " + f.getAnimeQoute().getQuote());*/
-        System.out.println(f.getTronaldDumpQuote().get_links());
-        }
+    public JeopardyDTO getJeopardyQuestion() throws IOException {
+        String jeopardyQuestion = HttpUtils.fetchData(jeopardyUrl);
+        JeopardyDTO jeopardyDTO = GSON.fromJson(jeopardyQuestion.replace("[", "").replace("]", ""), JeopardyDTO.class);
+        return jeopardyDTO;
+    }
+
+    public CombinedDTO getCombinedDTO() throws IOException {
+        CombinedDTO combinedDTO = new CombinedDTO(getChuckNorrisJoke(), getDadJoke(), getAnimeQuote(), getTronaldDumpQuote(), getJeopardyQuestion());
+        return combinedDTO;
+    }
 }
