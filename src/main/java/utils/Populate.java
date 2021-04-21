@@ -9,6 +9,7 @@ import javax.persistence.EntityManagerFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class Populate {
     private final EntityManagerFactory emf;
@@ -22,14 +23,23 @@ public class Populate {
         this.emf = emf;
     }
 
-    public boolean populateAll() {
-        populateUsers();
+    public List<String> populateAll() {
+        List<String> populated = new ArrayList<>();
+        if(populateUsers())
+            populated.add("users");
 
-        return true;
+        return populated;
     }
 
-    public void populateUsers() throws IllegalArgumentException {
+    /**
+     *
+     * @return Boolean regarding table being populated or not.
+     *
+     * */
+    public boolean populateUsers() throws IllegalArgumentException {
         UserFacade userFacade = UserFacade.getUserFacade(this.emf);
+
+        if (!userFacade.getUsers().isEmpty()) return false;
 
         // NOTICE: Always set your password as environment variables.
         String password_admin = "test";
@@ -47,6 +57,8 @@ public class Populate {
 
         userFacade.create("user", password_user, new ArrayList<>());
         userFacade.create("admin", password_admin, Collections.singletonList("admin"));
+
+        return true;
     }
 
 }

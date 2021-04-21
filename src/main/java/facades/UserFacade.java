@@ -1,6 +1,7 @@
 package facades;
 
 import com.google.common.base.Strings;
+import dtos.UserDTO;
 import entities.Role;
 import entities.User;
 
@@ -13,6 +14,8 @@ import org.apache.commons.lang3.EnumUtils;
 import security.errorhandling.AuthenticationException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class UserFacade {
@@ -90,6 +93,16 @@ public class UserFacade {
             em.getTransaction().commit();
 
             return user;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<UserDTO> getUsers() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<User> q = em.createQuery("SELECT u FROM User u", User.class);
+            return q.getResultList().stream().map(UserDTO::new).collect(Collectors.toList());
         } finally {
             em.close();
         }
