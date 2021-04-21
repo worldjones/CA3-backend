@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 import utils.Populate;
 
-//Disabled
 public class LoginEndpointTest {
 
     private static final int SERVER_PORT = 7777;
