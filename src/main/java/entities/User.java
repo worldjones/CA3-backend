@@ -2,7 +2,9 @@ package entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.*;
 
@@ -23,11 +25,11 @@ public class User implements Serializable {
 
     private String password;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_roles",
             joinColumns = { @JoinColumn(name = "fk_user_id") },
             inverseJoinColumns = { @JoinColumn(name = "fk_role") })
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -65,11 +67,11 @@ public class User implements Serializable {
         return BCrypt.checkpw(password, this.password);
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
