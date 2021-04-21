@@ -20,4 +20,12 @@ public class ChuckNorrisJokeDTO {
     public void setValue(String value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "ChuckNorrisJokeDTO{" +
+                "url='" + url + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }

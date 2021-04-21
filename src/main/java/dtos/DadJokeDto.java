@@ -19,4 +19,6 @@ public class DadJokeDto {
     public void setJoke(String joke) {
         this.joke = joke;
     }
+
+
 }

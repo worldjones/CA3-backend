@@ -28,4 +28,13 @@ public class AnimeQuoteDTO {
     public void setQuote(String quote) {
         this.quote = quote;
     }
+
+    @Override
+    public String toString() {
+        return "AnimeQuoteDTO{" +
+                "anime='" + anime + '\'' +
+                ", character='" + character + '\'' +
+                ", quote='" + quote + '\'' +
+                '}';
+    }
 }

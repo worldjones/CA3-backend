@@ -1,21 +1,9 @@
 package dtos;
 
-import com.google.gson.Gson;
-
 public class TronaldDumpDTO {
-    private String quote_id;
     private String value;
     private Object _links;
-
-    Gson GSON = new Gson();
-
-    public String getQuote_id() {
-        return quote_id;
-    }
-
-    public void setQuote_id(String quote_id) {
-        this.quote_id = quote_id;
-    }
+    private String href;
 
     public String getValue() {
         return value;
@@ -30,7 +18,16 @@ public class TronaldDumpDTO {
     }
 
     public void set_links(Object _links) {
-        this._links = GSON.toJsonTree(_links);
+        this._links = _links;
     }
 
+    public String getHref() {
+        return href;
+    }
+
+    public void setHref() {
+        String links = get_links().toString();
+        this.href = links.substring(links.lastIndexOf("=") + 1, links.indexOf("}"));
+        this._links = null;
+    }
 }
