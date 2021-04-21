@@ -1,5 +1,7 @@
 package entities;
 
+import com.google.common.collect.ImmutableList;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -15,11 +17,11 @@ import javax.validation.constraints.Size;
 @Table(name = "roles")
 public class Role implements Serializable {
 
-    public static final Roles DEFAULT_ROLE = Roles.USER;
-
-    public enum Roles {
-        USER,
-        ADMIN
+    // Default final utility.
+    public static final String DEFAULT_ROLE = "user";
+    public static final List<String> SYSTEM_ROLES = ImmutableList.of("user", "admin");
+    public static String findRole(String role) {
+        return SYSTEM_ROLES.stream().filter(r -> r.equalsIgnoreCase(role)).findAny().orElse(null);
     }
 
     private static final long serialVersionUID = 1L;
@@ -27,8 +29,7 @@ public class Role implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "role_name", length = 20)
-    @Enumerated(EnumType.STRING)
-    private Roles roleName;
+    private String roleName;
     
     @ManyToMany(mappedBy = "roles")
     private List<User> userList;
@@ -36,15 +37,15 @@ public class Role implements Serializable {
     public Role() {
     }
 
-    public Role(Roles role) {
+    public Role(String role) {
         this.roleName = role;
     }
 
-    public Roles getRoleName() {
+    public String getRoleName() {
         return roleName;
     }
 
-    public void setRoleName(Roles role) {
+    public void setRoleName(String role) {
         this.roleName = role;
     }
 
@@ -61,7 +62,7 @@ public class Role implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Role role = (Role) o;
-        return roleName == role.roleName;
+        return roleName.equals(role.roleName);
     }
 
     @Override
@@ -71,6 +72,6 @@ public class Role implements Serializable {
 
     @Override
     public String toString() {
-        return roleName.toString();
+        return roleName;
     }
 }

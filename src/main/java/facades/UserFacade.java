@@ -1,6 +1,7 @@
 package facades;
 
 import com.google.common.base.Strings;
+import entities.Role;
 import entities.User;
 
 import javax.persistence.EntityManager;
@@ -8,13 +9,12 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.WebApplicationException;
 
+import org.apache.commons.lang3.EnumUtils;
 import security.errorhandling.AuthenticationException;
 
 import java.util.List;
 
-/**
- * @author lam@cphbusiness.dk
- */
+
 public class UserFacade {
 
     private static EntityManagerFactory emf;
@@ -55,10 +55,41 @@ public class UserFacade {
     public User create(String username, String password, List<String> roles) {
         EntityManager em = emf.createEntityManager();
         try {
+            User user = new User();
+
+            // Validate
             if ((Strings.isNullOrEmpty(username) || username.length() < 3) || (Strings.isNullOrEmpty(password) || password.length() < 3))
                 throw new WebApplicationException("Username and/or password should be more than 3 characters!", 400);
 
-            throw new UnsupportedOperationException();
+            user.setUsername(username);
+            user.setPassword(password);
+
+            // Always want the default role for a user.
+            Role defaultRole = em.find(Role.class, Role.DEFAULT_ROLE);
+            if(defaultRole == null)
+                defaultRole = new Role(Role.DEFAULT_ROLE);
+            user.addRole(defaultRole);
+
+            // See if role already exists in database... if not:
+            // check if the "new role" exists in our enums of roles (! no dynamic roles !), else skip this role.
+            roles.forEach(roleName -> {
+                Role role;
+                role = em.find(Role.class, roleName);
+                if(role == null) {
+                    String foundSystemRole = Role.findRole(roleName);
+                    if(foundSystemRole != null)
+                        role = new Role(foundSystemRole);
+                    else return;
+                }
+
+                user.addRole(role);
+            });
+
+            em.getTransaction().begin();
+            em.persist(user);
+            em.getTransaction().commit();
+
+            return user;
         } finally {
             em.close();
         }
