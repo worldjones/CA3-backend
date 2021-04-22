@@ -17,12 +17,14 @@
 ### API Documentation
 *The following endpoints are set in this startcode.*
 
+[...] = headers required.
+
 | Method    | URL                                    | Request Body (JSON)     | Response (JSON)                         | Error         |
 |---        |---                                     |---                      |---                                      |---            |
-| POST      | /api/login                             | Authentication (1.0)      | Authentication (1.1)                  | er(1)         |
+| POST      | /api/login                             | Authentication (1.0)    | Authentication (1.1)                    | er(1)         |
 | GET       | /api/ext                               |                         | External Fetch (2.0)                    |               |
-| GET       | /api/info/user                         |                         | User Fetch (3.0)                        | er(2)         |
-| GET       | /api/ext/admin                         |                         | Admin Fetch (3.1)                       | er(2)         |
+| GET       | /api/info/user                         | [x-access-token]        | User Fetch  (3.0)                       | er(2)         |
+| GET       | /api/ext/admin                         | [x-access-token]         | Admin Fetch (3.1)                       | er(2)         |
 
 #### GET & POST Responses.
 ##### Authentication 1
