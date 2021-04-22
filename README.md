@@ -17,10 +17,12 @@
 ### API Documentation
 *The following endpoints are set in this startcode.*
 
-| Method    | URL                                    | Request Body (JSON)     | Response (JSON)                       | Error         |
-|---        |---                                     |---                      |---                                    |---            |
-| POST      | /api/login                             | Authentication (1)      | Authentication (1.1)                  | er(1)         |
-| GET       | /api/ext                               |                         | External Fetch (2)                    |               |
+| Method    | URL                                    | Request Body (JSON)     | Response (JSON)                         | Error         |
+|---        |---                                     |---                      |---                                      |---            |
+| POST      | /api/login                             | Authentication (1.0)      | Authentication (1.1)                  | er(1)         |
+| GET       | /api/ext                               |                         | External Fetch (2.0)                    |               |
+| GET       | /api/info/user                         |                         | User Fetch (3.0)                        | er(2)         |
+| GET       | /api/ext/admin                         |                         | Admin Fetch (3.1)                       | er(2)         |
 
 #### GET & POST Responses.
 ##### Authentication 1
@@ -68,12 +70,35 @@
 }
 ```
 
+##### Authenticated routes
+3.0 User Fetch
+```javascript
+{
+    "msg": "Hello to User: xxx"
+}
+```
+
+3.1 Admin Fetch
+```javascript
+{
+    "msg": "Hello to Admin: xxx"
+}
+```
+
 #### GET & POST Errors.
 1.0 Invalid password
 ```javascript
 {
     "code": 403,
     "message": "Invalid user name or password"
+}
+```
+
+2.0 Not authenticated
+```javascript
+{
+    "code": 403,
+    "message": "Token not valid (timed out?)"
 }
 ```
 
