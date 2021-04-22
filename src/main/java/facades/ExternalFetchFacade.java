@@ -1,13 +1,9 @@
 package facades;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import dtos.*;
-import utils.HttpUtils;
-
-import java.io.IOException;
+import threads.MyCallable;
+import java.util.concurrent.*;
 
 public class ExternalFetchFacade {
     String chuckNorrisUrl = "https://api.chucknorris.io/jokes/random";
@@ -18,39 +14,54 @@ public class ExternalFetchFacade {
 
     Gson GSON = new Gson();
 
-    public ChuckNorrisJokeDTO getChuckNorrisJoke() throws IOException {
-        String chuckJoke = HttpUtils.fetchData(chuckNorrisUrl);
-        ChuckNorrisJokeDTO chuckDTO = GSON.fromJson(chuckJoke, ChuckNorrisJokeDTO.class);
-        return chuckDTO;
+    public ChuckNorrisJokeDTO getChuckNorrisJoke(String data) {
+        return GSON.fromJson(data, ChuckNorrisJokeDTO.class);
     }
 
-    public DadJokeDto getDadJoke() throws IOException {
-        String dadJoke = HttpUtils.fetchData(dadJokeUrl);
-        DadJokeDto dadJokeDto = GSON.fromJson(dadJoke, DadJokeDto.class);
-        return dadJokeDto;
+    public DadJokeDto getDadJoke(String data) {
+        return GSON.fromJson(data, DadJokeDto.class);
     }
 
-    public AnimeQuoteDTO getAnimeQuote() throws IOException {
-        String animeQuote = HttpUtils.fetchData(animeQuoteUrl);
-        AnimeQuoteDTO animeQuoteDTO = GSON.fromJson(animeQuote, AnimeQuoteDTO.class);
-        return animeQuoteDTO;
+    public AnimeQuoteDTO getAnimeQuote(String data) {
+        return GSON.fromJson(data, AnimeQuoteDTO.class);
     }
 
-    public TronaldDumpDTO getTronaldDumpQuote() throws IOException {
-        String tronaldDumpQuote = HttpUtils.fetchData(tronaldDumpUrl);
-        TronaldDumpDTO tronaldDumpDTO = GSON.fromJson(tronaldDumpQuote, TronaldDumpDTO.class);
+    public TronaldDumpDTO getTronaldDumpQuote(String data) {
+        TronaldDumpDTO tronaldDumpDTO = GSON.fromJson(data, TronaldDumpDTO.class);
         tronaldDumpDTO.setHref();
         return tronaldDumpDTO;
     }
 
-    public JeopardyDTO getJeopardyQuestion() throws IOException {
-        String jeopardyQuestion = HttpUtils.fetchData(jeopardyUrl);
-        JeopardyDTO jeopardyDTO = GSON.fromJson(jeopardyQuestion.replace("[", "").replace("]", ""), JeopardyDTO.class);
-        return jeopardyDTO;
+    public JeopardyDTO getJeopardyQuestion(String data) {
+        return GSON.fromJson(data.replace("[", "").replace("]", ""), JeopardyDTO.class);
     }
 
-    public CombinedDTO getCombinedDTO() throws IOException {
-        CombinedDTO combinedDTO = new CombinedDTO(getChuckNorrisJoke(), getDadJoke(), getAnimeQuote(), getTronaldDumpQuote(), getJeopardyQuestion());
+    public CombinedDTO getCombinedDTO() throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        //long startTime = System.nanoTime();
+
+        Callable<String> getChuckNorris = new MyCallable(chuckNorrisUrl);
+        Callable<String> getDadJoke = new MyCallable(dadJokeUrl);
+        Callable<String> getAnimeQuote = new MyCallable(animeQuoteUrl);
+        Callable<String> getTronaldDump = new MyCallable(tronaldDumpUrl);
+        Callable<String> getJeopardy = new MyCallable(jeopardyUrl);
+
+        Future<String> future = executor.submit(getChuckNorris);
+        Future<String> future1 = executor.submit(getDadJoke);
+        Future<String> future2 = executor.submit(getAnimeQuote);
+        Future<String> future3 = executor.submit(getTronaldDump);
+        Future<String> future4 = executor.submit(getJeopardy);
+
+        ChuckNorrisJokeDTO chuckNorrisJokeDTO = getChuckNorrisJoke(future.get());
+        DadJokeDto dadJokeDTO = getDadJoke(future1.get());
+        AnimeQuoteDTO animeQuoteDTO = getAnimeQuote(future2.get());
+        TronaldDumpDTO tronaldDumpDTO = getTronaldDumpQuote(future3.get());
+        JeopardyDTO jeopardyDTO = getJeopardyQuestion(future4.get());
+
+        CombinedDTO combinedDTO = new CombinedDTO(chuckNorrisJokeDTO, dadJokeDTO, animeQuoteDTO, tronaldDumpDTO, jeopardyDTO);
+        /*long elapsedTime = System.nanoTime() - startTime;
+        System.out.println(elapsedTime / 1000000);*/
+        executor.shutdown();
         return combinedDTO;
     }
 }

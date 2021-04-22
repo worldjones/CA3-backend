@@ -5,6 +5,7 @@ import entities.User;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -26,7 +27,6 @@ import utils.EMF_Creator;
 @Path("ext")
 public class ExternalFetchResource {
 
-    private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final ExternalFetchFacade FACADE = new ExternalFetchFacade();
     Gson GSON = new Gson();
     @Context
@@ -37,7 +37,7 @@ public class ExternalFetchResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getInfoForAll() throws IOException {
+    public String getInfoForAll() throws IOException, ExecutionException, InterruptedException {
         return GSON.toJson(FACADE.getCombinedDTO());
     }
 }

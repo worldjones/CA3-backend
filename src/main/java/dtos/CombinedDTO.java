@@ -1,4 +1,7 @@
 package dtos;
+import lombok.Data;
+
+@Data
 
 public class CombinedDTO {
     private ChuckNorrisJokeDTO chuck;
